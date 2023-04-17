@@ -143,7 +143,7 @@ LOGIN_URL = "/login"
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 USERS_ROOT = os.path.join(MEDIA_ROOT, 'users')
 STATIC_URL = '/static/'
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 if not DEBUG:
     STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
