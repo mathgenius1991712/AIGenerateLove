@@ -1,0 +1,40 @@
+ {% load static %}
+ <!-- ======= Header ======= -->
+ <header id="header" class="fixed-top {% if innerPage %}header-inner-pages{% endif %}">
+  <div class="container d-flex align-items-center">
+
+    <h1 class="logo me-auto"><a href="{% url 'home' %}">AI Writer</a></h1>
+    <!-- Uncomment below if you prefer to use an image logo -->
+    <!-- <a href="index.html" class="logo me-auto"><img src="{% static '' %}/img/logo.png" alt="" class="img-fluid"></a>-->
+
+    <nav id="navbar" class="navbar" style="background-color: transparent;">
+      <ul>
+        <li class="dropdown"><a href="#"><span>Creaete Video</span> <i class="bi bi-chevron-down"></i></a>
+          <ul>
+            {% for type in types %}
+            <li><a href="{% url 'answer_questions' type=type.id %}">{{type.title}}</a></li>
+            {% endfor %}
+          </ul>
+        </li>
+        <li><a class="nav-link scrollto" href="{% url 'sample_videos' %}">Sample videos</a></li>
+        <li><a class="nav-link scrollto" href="{% url 'pricing' %}">Pricing</a></li>
+        <li><a class="nav-link scrollto" href="{% url 'about' %}">About us</a></li>
+        <li><a class="nav-link scrollto" href="{% url 'contact' %}">Contact us</a></li>
+        {% if logged_in %}
+        <li class="dropdown"><a href="#"><img width="40" height="40" src="{% static 'img/avatar.png' %}"> <i class="bi bi-chevron-down"></i></a>
+          <ul>
+            <li class="px-2">Signed in as {{request.user}}</li>
+            <li><a href="{% url 'user_profile' %}">Profile</a></li>
+            <li><a href="{% url 'logout' %}">Sign out</a></li>
+          </ul>
+        </li>
+        {% else %}
+        <li><a class="sign nav-link scrollto" href="{% url 'login' %}">Sign in</a></li>
+        <li><a class="sign nav-link scrollto" href="{% url 'register' %}">Sign up</a></li>   
+        {% endif %}
+      </ul>
+      <i class="bi bi-list mobile-nav-toggle"></i>
+    </nav><!-- .navbar -->
+
+  </div>
+</header><!-- End Header -->

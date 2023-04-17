@@ -1,0 +1,104 @@
+
+{% extends 'admin_dashboard/layouts/layout.html' %}
+
+{% block main%}
+<main id="main" class="main">
+
+  <div class="pagetitle">
+    <h1>Feedback</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+        <li class="breadcrumb-item active">Feedback</li>
+      </ol>
+    </nav>
+  </div><!-- End Page Title -->
+
+  <section class="section dashboard">
+    <div class="row">
+
+      <!-- Left side columns -->
+      <div class="col-lg-12">
+        <div class="row">
+
+
+          <!-- Recent Sales -->
+          <div class="col-12">
+            <div class="card recent-sales overflow-auto">
+              <div class="card-body">
+                <h5 class="card-title">Feedback</h5>
+
+                <table class="table table-borderless datatable">
+                  <thead>
+                    <tr>
+                      <th scope="col">Name</th>
+                      <th scope="col">Email</th>
+                      <th scope="col">Subject</th>
+                      <th scope="col">Content</th>
+                      <th scope="col">Date</th>
+                      <th scope="col">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for feedback in feedbacks %}
+                      <tr >
+                        <td scope="row">{{feedback.name}}</td>
+                        <td>{{feedback.email}} </td>
+                        <td><a href="{% url 'admin_feedback_detail' feedback.id %}" >{{feedback.subject}}</a></td>
+                        <td><a href="{% url 'admin_feedback_detail' feedback.id %}" >{{feedback.feedback_text}}</a></td>
+                        <td>{{feedback.created_at}}</td>
+                        <td>
+                            {% if feedback.status == "unread" %}          
+                            <input id="{{feedback.id}}" class="form-check-input" type="checkbox" value="" onclick="changeStatus( {{feedback.id}})">
+                            <label class="form-check-label" for="{{feedback.id}}">
+                              Read
+                            </label>
+                            {% else %}
+                            <input id="{{feedback.id}}" class="form-check-input" type="checkbox" value="" checked onclick="changeStatus( {{feedback.id}})">
+                            <label class="form-check-label" for="{{feedback.id}}" >
+                              Read
+                            </label>
+                            {% endif %}
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+
+              </div>
+
+            </div>
+          </div><!-- End Recent Sales -->
+
+        </div>
+      </div><!-- End Left side columns -->
+
+
+    </div>
+  </section>
+
+</main><!-- End #main -->
+<script>
+  function changeStatus(id){
+    status = $("#"+id).is(":checked")
+    console.log(status)
+    if(status == "true"){
+      status = "read";
+    }
+    else status = "unread";
+    console.log(status)
+    $.ajax({
+      url: '{% url "admin_update_feedback_status_ajax" %}',
+      type: 'POST',
+      data: { 
+        'status': status, 
+        'id': ""+id,
+        csrfmiddlewaretoken:csrftoken 
+      },
+      success: function(data){
+        console.log(data + "success")
+      }
+    });
+  }
+</script>
+{% endblock%}

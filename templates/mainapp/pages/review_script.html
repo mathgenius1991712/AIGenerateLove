@@ -1,0 +1,105 @@
+{% extends 'mainapp\layouts\landing_layout.html' %}
+{% load static %}
+{% block page_level_css%}
+<link rel="stylesheet" type="text/css" href="{% static 'css/review_script.css' %}">
+{% endblock %}
+
+
+{% block content %}
+<!-- ======= Simple Filler Section ======= -->
+<section class="simple-filler" style="padding:0;">
+</section>
+<section id="review_script" class="review_script" >
+  <div class="container" data-aos="fade-up">
+    <div class="row my-2 mx-2">
+      <div class="col-md-2">
+        <a class="btn btn-secondary float-left" onClick="backToQuestions()">Go Back To Step1
+          Questions</a>
+      </div>
+      <div class="col-md-8">
+        <h2 class="mx-auto">Generate A Personalized Video  {{type.title}}</h2>
+      </div>
+      <div class="col-md-2">
+        <a class="btn btn-secondary float-left" href="{% url 'generate_voiceover' %}">Go To Step 2
+          Voiceover</a>
+      </div>
+    </div>
+    <div class="row my-2 text-center">
+      <p class="text-center">
+        <span class="mx-auto" style="font-size: 18px; font-weight: bolder;">Review and edit the script written by AI</span>
+      </p>
+    </div>
+    <form id="edited_script_form" onsubmit = "submitForm()" method="post">
+      {% csrf_token %}
+      <div class="mb-2">
+        <textarea id="edited_script" rows="12" name="script" class="form-control" id="script">{{script}}</textarea>
+      </div>
+      <div class="text-center row">
+        <div class="col-md-4">
+          <button id="copy_message_button" type="button"  class="btn btn-primary mb-3 mx-auto w-100" onclick="CopyText()" onmouseout="outFunc()">
+            Copy Message
+          </button>
+        </div>
+        <div class="col-md-4">
+          <button type="button"  class="btn btn-primary mb-3 mx-auto w-100"  data-toggle="modal" data-target="#confirmModal">Generate New Message</button>
+        </div>
+        <div class="col-md-4">
+          <button type="submit" type="button"  class="btn btn-primary mb-3 mx-auto w-100">Go to Step2 - Voiceover</a>
+        </div>
+    </form>
+  </div>
+</section><!-- End About Us Section -->
+<!-- Button trigger modal -->
+
+<!-- Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Do you really want to regenerate script?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        If you generate a new message the current one is deleted. <br>You may want to go back to "Step 1 - Questions" to adjust your answers to get a better message.<br> You can generate maximum 3 messages for free.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <a href="{% url 'regenerate_script' %}" id="confirm_regenerate_script" type="button" class="btn btn-primary">Generate</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function CopyText(){
+    var copyText = document.getElementById("edited_script");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(copyText.value);
+    
+    var copyButton = document.getElementById("copy_message_button");
+    copyButton.innerText = "Message copied to clipboard!";
+    copyButton.setAttribute("border", "3px solid green;")
+  }
+  function outFunc() {
+    var copyButton = document.getElementById("copy_message_button");
+    copyButton.innerText = "Copy Message";
+    copyButton.setAttribute("border", "3px solid green;");
+  }
+  function backToQuestions(){
+    var form = document.querySelector('#edited_script_form');
+    var formData = new FormData(form);
+    fetch("{% url 'back_to_questions' %}", {
+      method: "POST",
+      body: formData
+    }).then(() => {
+      window.location.href = "{% url 'answer_questions' type=type.id %}";
+    }).catch((error) => {
+      console.error('Error:', error);
+    });
+  }
+
+</script>
+{% endblock %}

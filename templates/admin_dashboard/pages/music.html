@@ -1,0 +1,112 @@
+
+{% extends 'admin_dashboard/layouts/layout.html' %}
+
+{% block main%}
+<main id="main" class="main">
+
+  <div class="pagetitle">
+    <h1>Dashboard</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'admin_music' %}">Music</a></li>
+      </ol>
+    </nav>
+  </div><!-- End Page Title -->
+
+  <section class="section">
+    <div class="row">
+      <div class="col-lg-12">
+
+        <div class="card">
+          <div class="card-header">
+            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#newMusicModal">Add Background Music</button>
+          </div>
+          <div class="card-body">
+            <!-- Table with stripped rows -->
+            <table class="table datatable">
+              <thead>
+                <tr>
+                  <th scope="col">File Name</th>
+                  <th scope="col">Desc</th>
+                  <th scope="col">Play</th>
+                  <th scope="col">Operate</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for each_music in music %}
+                <tr id="{{each_music.id}}">
+                  <th scope="col">{{each_music.filename}}</th>
+                  <th scope="col">{{each_music.desc}}</th>
+                  <th scope="col">
+                    <a class="btn btn-outline-primary" href="{{each_music.url}}">Play</a>
+                  </th>
+                  <th scope="col">
+                    <button class="btn btn-outline-primary" onclick="deleteMusic({{each_music.id}})">Delete</button>
+                  </th>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            <!-- End Table with stripped rows -->
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+  <div class="modal fade" id="newMusicModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Upload Background Music</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Vertical Form -->
+          <form class="row g-3" id="upload_form" action="{% url 'admin_upload_music' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}  
+            <div class="form-group">
+                <label for="music_file" class="form-label">Select Music*</label>
+                <input class="form-control" type="file" id="music_file" name="music_file" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="music_description" class="form-label">Description</label>
+              <input type="text" class="form-control" id="music_description" name="music_description">
+            </div>
+            <div class="text-center">
+              <button type="submit" class="btn btn-primary" >Submit</button>
+              <button type="reset" class="btn btn-secondary" id="upload_form_reset_button">Reset</button>
+            </div>
+          </form><!-- Vertical Form -->
+        </div>
+      </div>
+    </div>
+  </div><!-- End Basic Modal-->
+</main><!-- End #main -->
+<script>
+  function deleteMusic(id){
+    if (confirm("Do you want to delet this Music?")) {
+      $.ajax({
+        url: '{% url "admin_delete_music_ajax" %}',
+        type: 'POST',
+        data: { 
+          'id': ""+id,
+          csrfmiddlewaretoken:csrftoken 
+        },
+        success: function(data){
+          $("#"+id).remove();
+        },
+        error: function(data){
+          alert("whoops...! error occured while deleting")
+        }
+      });
+
+
+    } else {
+      return
+    }
+  }
+</script>
+{% endblock%}

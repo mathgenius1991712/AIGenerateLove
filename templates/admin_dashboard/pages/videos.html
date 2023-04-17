@@ -1,0 +1,122 @@
+
+{% extends 'admin_dashboard/layouts/layout.html' %}
+
+{% block main%}
+<main id="main" class="main">
+
+  <div class="pagetitle">
+    <h1>Dashboard</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'admin_home' %}">Vidoes</a></li>
+      </ol>
+    </nav>
+  </div><!-- End Page Title -->
+
+  <section class="section">
+    <div class="row">
+      <div class="col-lg-12">
+
+        <div class="card">
+          <div class="card-header">
+            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#newVideoModal">Add Video</button>
+          </div>
+          <div class="card-body">
+            <!-- Table with stripped rows -->
+            <table class="table datatable">
+              <thead>
+                <tr>
+                  <th scope="col">File Name</th>
+                  <th scope="col">Subject</th>
+                  <th scope="col">Desc</th>
+                  <th scope="col">Play</th>
+                  <th scope="col">Operate</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for video in videos %}
+                <tr id="{{video.id}}">
+                  <th scope="col">{{video.filename}}</th>
+                  <th scope="col">{{video.type.title}}</th>
+                  <th scope="col">{{video.desc}}</th>
+                  <th scope="col">
+                    <a class="btn btn-outline-primary" href="{{video.url}}" >Play</a>
+                  </th>
+                  <th scope="col">
+                    <button class="btn btn-outline-primary" onclick="deleteVideo({{video.id}})">Delete</button>
+                  </th>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            <!-- End Table with stripped rows -->
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+  <div class="modal fade" id="newVideoModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Upload Video</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Vertical Form -->
+          <form class="row g-3" id="upload_form" action="{% url 'admin_upload_video' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}  
+            <div class="form-group">
+              <label for="video_category" class="form-label">Video Category</label>
+              <select class="form-control form-select" id="video_category" name="video_category" required>
+                {% for type in types %}
+                <option value="{{type.id}}">{{type.title}}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="form-group">
+                <label for="video_file" class="form-label">Select Video*</label>
+                <input class="form-control" type="file" id="video_file" name="video_file" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="video_description" class="form-label">Description</label>
+              <input type="text" class="form-control" id="video_description" name="video_description">
+            </div>
+            <div class="text-center">
+              <button type="submit" class="btn btn-primary" >Submit</button>
+              <button type="reset" class="btn btn-secondary" id="upload_form_reset_button">Reset</button>
+            </div>
+          </form><!-- Vertical Form -->
+        </div>
+      </div>
+    </div>
+  </div><!-- End Basic Modal-->
+</main><!-- End #main -->
+<script>
+  function deleteVideo(id){
+    if (confirm("Do you want to delet this video?")) {
+      $.ajax({
+        url: '{% url "admin_delete_video_ajax" %}',
+        type: 'POST',
+        data: { 
+          'id': ""+id,
+          csrfmiddlewaretoken:csrftoken 
+        },
+        success: function(data){
+          $("#"+id).remove();
+        },
+        error: function(data){
+          alert("whoops...! error occured while deleting")
+        }
+      });
+
+
+    } else {
+      return
+    }
+  }
+</script>
+{% endblock%}
