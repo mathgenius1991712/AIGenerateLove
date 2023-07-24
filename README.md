@@ -27,5 +27,5 @@ The website will then be available at http://127.0.0.1:8000/
 - [ElevenLabs] []
 ## Author
 
-- **Alex Kovalenko** - [mathgenius1991712](https://beta.elevenlabs.io/)
+- **RCAL** - [mathgenius1991712](https://beta.elevenlabs.io/)
 
